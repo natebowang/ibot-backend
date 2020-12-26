@@ -9,10 +9,11 @@ lmt:
 # variants: 
 id:
 classid:
+name:
 start_date:
 end_date:
-day:
-time:
+weekday:
+start_time:
 price_per_class:
 stock:
 status:
@@ -21,29 +22,29 @@ lmt:
 # timetable:
 id:
 variantid:
-time:
+start_time:
 status:
 lmt:
 
 # teachers
 id:
-name:
+realname:
 status:
 lmt:
 
 # users
 id:
-username:
-pwd:
-realname:
 email:
+pwd:
 phone:
+login_method_id:
+user_state:
 status:
 lmt:
 
 # students
 id:
-name:
+realname:
 email:
 phone:
 status:
