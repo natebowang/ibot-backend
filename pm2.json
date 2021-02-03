@@ -1,0 +1,17 @@
+{
+  "apps": [
+    {
+      "name": "ibot",
+      "script": "bin/www",
+      "watch": true,
+      "ignore_watch": [
+        "node_modules",
+        "logs"
+      ],
+      "instances": 4,
+      "out_file": "./logs/out.log",
+      "error_file": "./logs/err.log",
+      "log_date_format": "YYYYMMDD_HH:mm"
+    }
+  ]
+}
