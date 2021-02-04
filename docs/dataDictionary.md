@@ -1,83 +1,86 @@
-# classes
+@todo update according to ibot_postgres.sql
+# subjects
 id: 
 name: 
-teacherid:
+teacher_id:
 description:
-status:
-lmt:
+record_status:
+mtime:
 
-# variants: 
+# classes: 
 id:
-classid:
+subject_id:
 name:
 start_date:
 end_date:
 weekday:
 start_time:
+class_duration: 
 price_per_class:
 stock:
-status:
-lmt:
+record_status:
+mtime:
 
 # timetable:
 id:
-variantid:
+class_id:
 start_time:
-status:
-lmt:
+record_status:
+mtime:
 
 # teachers
 id:
-realname:
-status:
-lmt:
+real_name:
+record_status:
+mtime:
 
 # users
 id:
-email:
 pwd:
+salt:
 phone:
+email:
 login_method_id:
 user_state:
-status:
-lmt:
+record_status:
+mtime:
 
 # students
 id:
-realname:
+real_name:
 email:
 phone:
-status:
-lmt:
+record_status:
+mtime:
 
 # registration
 id:
-studentid:
-variantid:
+student_id:
+variant_id:
 registration_time:
-status:
-lmt:
+record_status:
+mtime:
 
-# attandance
+# attendance
 id:
-studentid:
-timetableid:
-attandance_state: 
-status:
-lmt:
+student_id:
+timetable_id:
+attendance_state: 
+record_status:
+mtime:
 
 # payments
 id:
-userid:
+user_id:
 amount:
 payment_method_id:
 payment_time:
-status:
-lmt:
+record_status:
+mtime:
 
 # payment_methods
 id:
 name:
-type:
-status:
-lmt:
+payment_type:
+record_status:
+mtime:
