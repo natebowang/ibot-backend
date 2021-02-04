@@ -4,7 +4,7 @@ CREATE TABLE public.users
 
 --     Authentication
     username        varchar(200) NOT NULL,
-    pwd             varchar(200) NOT NULL,
+    password        varchar(200) NOT NULL,
     salt            varchar(200) NOT NULL,
     login_method_id integer      NOT NULL,
 
@@ -12,13 +12,15 @@ CREATE TABLE public.users
     email           varchar(200),
     phone           varchar(200),
     avatar          varchar(200),
-    user_state      smallint     NOT NULL,
+    user_state      smallint     NOT NULL DEFAULT 1,
 
 --     metadata
-    record_status   smallint     NOT NULL,
-    mtime           timestamptz  NOT NULL
+    record_status   smallint     NOT NULL DEFAULT 1,
+    mtime           timestamptz  NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-COMMENT ON COLUMN users.login_method_id IS '1. Email + Password; 2. Google OAuth';
+COMMENT ON COLUMN users.login_method_id IS '0. Email + Password; 1. Google OAuth';
+COMMENT ON COLUMN users.user_state IS '0. Enabled; 1. Disabled';
+COMMENT ON COLUMN users.record_status IS '0. Normal; 1. Deleted';
 
 CREATE TABLE public.subjects
 (
