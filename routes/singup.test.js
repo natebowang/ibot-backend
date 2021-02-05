@@ -18,7 +18,7 @@ describe('Sign up', () => {
             .set('Accept', 'application/json')
             .send({
                 username: username,
-                password: '123'
+                password: 'abc123!!!'
             })
             .expect(201);
         expect(body).toMatchObject({

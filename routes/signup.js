@@ -3,13 +3,22 @@ const createError = require('http-errors');
 const xss = require('xss');
 const crypto = require('crypto');
 const {pgPool} = require('../db/connection.js');
-const validator = require('email-validator');
+const emailValidator = require('email-validator');
+const PasswordValidator = require('password-validator');
 
 const router = express.Router();
+
+let passwordValidator = new PasswordValidator();
+passwordValidator.is().min(6)             // Minimum length 6
+    .is().max(20)                         // Maximum length 20
+    .has().digits()                             // Must have digit
+    .has().symbols()                            // Must have symbols
+    .has().not().spaces();                      // Should not have spaces
+
 /**
  * Create user name and password.
  * Curl -v
- *      -d '{ "username":"wb", "password": "wb"}'
+ *      -d '{ "username":"bob@email.com", "password": "abc123!!!"}'
  *      -H "Content-Type:application/json"
  *      http://localhost:8000/api/signup
  */
@@ -18,7 +27,10 @@ router.post('/', async (req, res, next) => {
     const password = req.body.password || '';
     let errorMessage = '';
 
-    if (validator.validate(username) && password !== '') {
+    const emailValidateResult = emailValidator.validate(username);
+    const passwordValidateResultArray = passwordValidator.validate(password, {list: true});
+
+    if (emailValidateResult && passwordValidateResultArray.length === 0) {
         // todo: use pool.connect()
         const duplicateCheckResult = await pgPool.query(
             'SELECT username FROM users WHERE username=$1;',
@@ -51,11 +63,11 @@ router.post('/', async (req, res, next) => {
             next(createError(409, 'User exists'));
         }
     } else {
-        if (!validator.validate(username)) {
+        if (!emailValidator.validate(username)) {
             errorMessage = errorMessage + 'Empty username or wrong username format. ';
         }
-        if (password === '') {
-            errorMessage = errorMessage + 'Empty password. ';
+        if (passwordValidateResultArray.length !== 0) {
+            errorMessage = errorMessage + 'Wrong password format: ' + passwordValidateResultArray + '.';
         }
         next(createError(422, errorMessage));
     }
