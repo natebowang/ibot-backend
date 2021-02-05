@@ -60,11 +60,11 @@ router.post('/', async (req, res, next) => {
                 next(createError(422)); // 422: Unprocessable Entity. i.e. wrong data type
             }
         } else {
-            next(createError(409, 'User exists'));
+            next(createError(409, 'User exists.'));
         }
     } else {
         if (!emailValidator.validate(username)) {
-            errorMessage = errorMessage + 'Empty username or wrong username format. ';
+            errorMessage = errorMessage + 'Empty username or wrong username format.';
         }
         if (passwordValidateResultArray.length !== 0) {
             errorMessage = errorMessage + 'Wrong password format: ' + passwordValidateResultArray + '.';
