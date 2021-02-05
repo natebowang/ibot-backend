@@ -28,6 +28,7 @@ app.use((req, res, next) => {
 // error handler
 app.use((err, req, res, next) => {
     // render the error page
+    console.log((err))
     res.status(err.status || 500);
     res.send(err.status + ': ' + err.message);
 });

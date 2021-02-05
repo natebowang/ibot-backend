@@ -3,17 +3,22 @@ const createError = require('http-errors');
 const xss = require('xss');
 const crypto = require('crypto');
 const {pgPool} = require('../db/connection.js');
+const validator = require('email-validator');
 
 const router = express.Router();
-
-// Create user name and password.
-// Curl -v -d '{ "username":"wb", "password": "wb"}' -H "Content-Type:application/json" http://localhost:8000/api/signup
+/**
+ * Create user name and password.
+ * Curl -v
+ *      -d '{ "username":"wb", "password": "wb"}'
+ *      -H "Content-Type:application/json"
+ *      http://localhost:8000/api/signup
+ */
 router.post('/', async (req, res, next) => {
     const username = xss(req.body.username) || '';
     const password = req.body.password || '';
     let errorMessage = '';
 
-    if (username !== '' && password !== '') {
+    if (validator.validate(username) && password !== '') {
         // todo: use pool.connect()
         const duplicateCheckResult = await pgPool.query(
             'SELECT username FROM users WHERE username=$1;',
@@ -46,13 +51,13 @@ router.post('/', async (req, res, next) => {
             next(createError(409, 'User exists'));
         }
     } else {
-        if (username === '') {
-            errorMessage = errorMessage + 'Empty username. ';
+        if (!validator.validate(username)) {
+            errorMessage = errorMessage + 'Empty username or wrong username format. ';
         }
         if (password === '') {
             errorMessage = errorMessage + 'Empty password. ';
         }
-        next(createError(422), errorMessage);
+        next(createError(422, errorMessage));
     }
 });
 
