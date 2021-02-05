@@ -31,6 +31,31 @@ describe('Success sign up', () => {
     });
 });
 
+describe('User exists', () => {
+    const username = 'testuser1@email.com';
+
+    beforeAll(async () => {
+        await pgPool.query(
+            'INSERT INTO users ' +
+            '(username, password, salt, login_method_id, email, user_state) VALUES ' +
+            '($1, $2, $3, $4, $5, $6);',
+            [username, 'fakePassword', 'fakeSalt', 0, username, 1]
+        );
+    });
+
+    test('POST /api/signup', async () => {
+        const {text} = await request(app)
+            .post('/api/signup')
+            .set('Accept', 'application/json')
+            .send({
+                username: username,
+                password: 'abc123!!!'
+            })
+            .expect(409);
+        expect(text).toEqual('409: User exists.')
+    });
+});
+
 describe('Wrong email format', () => {
     const username = 'testuser1';
 
