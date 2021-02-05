@@ -15,7 +15,7 @@ CREATE TABLE public.users
     user_state      smallint     NOT NULL DEFAULT 1,
 
 --     metadata
-    record_status   smallint     NOT NULL DEFAULT 1,
+    record_status   smallint     NOT NULL DEFAULT 0,
     mtime           timestamptz  NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 COMMENT ON COLUMN users.login_method_id IS '0. Email + Password; 1. Google OAuth';

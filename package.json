@@ -5,7 +5,7 @@
   "scripts": {
     "start": "cross-env PORT=8000 NODE_ENV=dev nodemon --inspect ./bin/www",
     "deploy": "cross-env PORT=8000 NODE_ENV=prod pm2 start pm2.json",
-    "test": "NODE_ENV=dev jest --watch"
+    "test": "NODE_ENV=dev jest --watch --detectOpenHandles"
   },
   "dependencies": {
     "connect-redis": "^5.0.0",

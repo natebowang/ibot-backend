@@ -14,6 +14,7 @@ router.post('/', async (req, res, next) => {
     let errorMessage = '';
 
     if (username !== '' && password !== '') {
+        // todo: use pool.connect()
         const duplicateCheckResult = await pgPool.query(
             'SELECT username FROM users WHERE username=$1;',
             [username]
@@ -23,14 +24,23 @@ router.post('/', async (req, res, next) => {
             const salt = crypto.randomBytes(48).toString('base64');
             let passwordSha256 = sha.update(password + salt).digest('hex');
             try {
-                const insertResult = await pgPool.query(
-                    'INSERT INTO users (username, password, salt, login_method_id) VALUES ($1, $2, $3, $4);',
-                    [username, passwordSha256, salt, 0]
+                await pgPool.query(
+                    'INSERT INTO users ' +
+                    '(username, password, salt, login_method_id, email, user_state) VALUES ' +
+                    '($1, $2, $3, $4, $5, $6);',
+                    [username, passwordSha256, salt, 0, username, 1]
                 );
                 res.status(201);
-                await res.json(insertResult);
+                const responseUserObject = {
+                    username: username,
+                    email: username,
+                    phone: null,
+                    avatar: null,
+                    user_state: 1
+                };
+                await res.json(responseUserObject);
             } catch (err) {
-                next(createError(422));
+                next(createError(422)); // 422: Unprocessable Entity. i.e. wrong data type
             }
         } else {
             next(createError(409, 'User exists'));
