@@ -10,7 +10,7 @@ const router = express.Router();
 
 let passwordValidator = new PasswordValidator();
 passwordValidator.is().min(6)             // Minimum length 6
-    .is().max(20)                         // Maximum length 20
+    .is().max(50)                         // Maximum length 50
     .has().digits()                             // Must have digit
     .has().symbols()                            // Must have symbols
     .has().not().spaces();                      // Should not have spaces
@@ -58,10 +58,12 @@ router.post('/', async (req, res, next) => {
                 };
                 await res.json(responseUserObject);
             } catch (err) {
-                next(createError(422)); // 422: Unprocessable Entity. i.e. wrong data type
+                errorProps = Object.assign(errorProps, {unprocessableEntity: true});
+                next(createError(422, 'Unprocessable Entity.', {errorProps: errorProps})); // 422: Unprocessable Entity. i.e. wrong data type
             }
         } else {
-            next(createError(409, 'User exists.'));
+            errorProps = Object.assign(errorProps, {userExists: true});
+            next(createError(409, 'User exists.', {errorProps: errorProps}));
         }
     } else {
         if (!emailValidator.validate(username)) {
