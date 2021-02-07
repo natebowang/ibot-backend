@@ -26,6 +26,7 @@ router.post('/', async (req, res, next) => {
     const username = xss(req.body.username) || '';
     const password = req.body.password || '';
     let errorMessage = '';
+    let errorProps = {};
 
     const emailValidateResult = emailValidator.validate(username);
     const passwordValidateResultArray = passwordValidator.validate(password, {list: true});
@@ -65,11 +66,16 @@ router.post('/', async (req, res, next) => {
     } else {
         if (!emailValidator.validate(username)) {
             errorMessage = errorMessage + 'Empty username or wrong username format.';
+            errorProps = Object.assign(errorProps, {wrongUsernameFormat: true});
         }
         if (passwordValidateResultArray.length !== 0) {
             errorMessage = errorMessage + 'Wrong password format: ' + passwordValidateResultArray + '.';
+            errorProps = Object.assign(errorProps, {
+                wrongPasswordFormat: true,
+                passwordValidateResultArray: passwordValidateResultArray
+            });
         }
-        next(createError(422, errorMessage));
+        next(createError(422, errorMessage, {errorProps: errorProps}));
     }
 });
 

@@ -29,7 +29,8 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
     // render the error page
     res.status(err.status || 500);
-    res.send(err.status + ': ' + err.message);
+    // res.send(res.status + ': ' + err.message);
+    res.json(err.errorProps);
 });
 
 module.exports = app;
