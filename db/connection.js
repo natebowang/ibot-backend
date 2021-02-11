@@ -23,7 +23,7 @@ switch (env) {
         module.exports = {
             pgPool: new Pool({
                 host: 'localhost',
-                user: 'wangbo',
+                user: 'ec2-user',
                 password: null,
                 database: 'ibot',
                 port: 5432
