@@ -29,9 +29,9 @@ router.post('/', async (req, res, next) => {
     let errorProps = {};
 
     const emailValidateResult = emailValidator.validate(username);
-    const passwordValidateResultArray = passwordValidator.validate(password, {list: true});
+    const passwordValidationResultArray = passwordValidator.validate(password, {list: true});
 
-    if (emailValidateResult && passwordValidateResultArray.length === 0) {
+    if (emailValidateResult && passwordValidationResultArray.length === 0) {
         // todo: use pool.connect()
         const duplicateCheckResult = await pgPool.query(
             'SELECT username FROM users WHERE username=$1;',
@@ -70,11 +70,11 @@ router.post('/', async (req, res, next) => {
             errorMessage = errorMessage + 'Empty username or wrong username format.';
             errorProps = Object.assign(errorProps, {wrongUsernameFormat: true});
         }
-        if (passwordValidateResultArray.length !== 0) {
-            errorMessage = errorMessage + 'Wrong password format: ' + passwordValidateResultArray + '.';
+        if (passwordValidationResultArray.length !== 0) {
+            errorMessage = errorMessage + 'Wrong password format: ' + passwordValidationResultArray + '.';
             errorProps = Object.assign(errorProps, {
                 wrongPasswordFormat: true,
-                passwordValidateResultArray: passwordValidateResultArray
+                passwordValidationResultArray: passwordValidationResultArray
             });
         }
         next(createError(422, errorMessage, {errorProps: errorProps}));
