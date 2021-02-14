@@ -28,10 +28,10 @@ switch (env) {
                 database: 'ibot',
                 port: 5432
             }),
-            redisClient: redis.createClient ({
-                host: 'localhost',
-                port: 6379,
-            })
+            // redisClient: redis.createClient ({
+            //     host: 'localhost',
+            //     port: 6379,
+            // })
         };
         break
 }

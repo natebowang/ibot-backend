@@ -13,7 +13,7 @@ describe('Success sign up', () => {
     });
 
     test('POST /api/signup', async () => {
-        const {header, body} = await request(app)
+        const {header, body, text} = await request(app)
             .post('/api/signup')
             .set('Accept', 'application/json')
             .send({
@@ -44,7 +44,7 @@ describe('User exists', () => {
     });
 
     test('POST /api/signup', async () => {
-        const {text} = await request(app)
+        const {body} = await request(app)
             .post('/api/signup')
             .set('Accept', 'application/json')
             .send({
@@ -52,7 +52,9 @@ describe('User exists', () => {
                 password: 'abc123!!!'
             })
             .expect(409);
-        expect(text).toEqual('409: User exists.')
+        expect(body).toMatchObject({
+            userExists: true,
+        })
     });
 });
 
@@ -67,7 +69,7 @@ describe('Wrong email format', () => {
     });
 
     test('POST /api/signup', async () => {
-        const {text} = await request(app)
+        const {body} = await request(app)
             .post('/api/signup')
             .set('Accept', 'application/json')
             .send({
@@ -75,7 +77,9 @@ describe('Wrong email format', () => {
                 password: 'abc123!!!'
             })
             .expect(422);
-        expect(text).toEqual('422: Empty username or wrong username format.')
+        expect(body).toMatchObject({
+            wrongUsernameFormat: true,
+        })
     });
 });
 
@@ -90,7 +94,7 @@ describe('Wrong password format', () => {
     });
 
     test('POST /api/signup', async () => {
-        const {text} = await request(app)
+        const {body} = await request(app)
             .post('/api/signup')
             .set('Accept', 'application/json')
             .send({
@@ -98,7 +102,9 @@ describe('Wrong password format', () => {
                 password: 'abc'
             })
             .expect(422);
-        expect(text).toEqual('422: Wrong password format: min,digits,symbols.')
+        expect(body).toMatchObject({
+            wrongPasswordFormat: true,
+        })
     });
 });
 
