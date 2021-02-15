@@ -23,15 +23,15 @@ switch (env) {
         module.exports = {
             pgPool: new Pool({
                 host: 'localhost',
-                user: 'ec2-user',
+                user: 'wangbo',
                 password: null,
                 database: 'ibot',
                 port: 5432
             }),
-            // redisClient: redis.createClient ({
-            //     host: 'localhost',
-            //     port: 6379,
-            // })
+            redisClient: redis.createClient ({
+                host: 'localhost',
+                port: 6379,
+            })
         };
         break
 }

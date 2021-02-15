@@ -3,7 +3,7 @@ const app = require('../app.js');
 const {pgPool} = require('../db/connection.js');
 
 describe('Success sign up', () => {
-    const username = 'testuser1@email.com';
+    const username = 'test-signup-user@email.com';
 
     beforeAll(async () => {
         await pgPool.query(
@@ -26,13 +26,12 @@ describe('Success sign up', () => {
             email: username,
             phone: null,
             avatar: null,
-            user_state: 1
         })
     });
 });
 
 describe('User exists', () => {
-    const username = 'testuser1@email.com';
+    const username = 'test-signup-user@email.com';
 
     beforeAll(async () => {
         await pgPool.query(
@@ -84,7 +83,7 @@ describe('Wrong email format', () => {
 });
 
 describe('Wrong password format', () => {
-    const username = 'testuser1@email.com';
+    const username = 'test-signup-user@email.com';
 
     beforeAll(async () => {
         await pgPool.query(

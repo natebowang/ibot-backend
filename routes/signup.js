@@ -34,7 +34,7 @@ router.post('/', async (req, res, next) => {
     if (emailValidateResult && passwordValidationResultArray.length === 0) {
         // todo: use pool.connect()
         const duplicateCheckResult = await pgPool.query(
-            'SELECT username FROM users WHERE username=$1;',
+            'SELECT username FROM users WHERE username=$1 AND record_status=0;',
             [username]
         );
         if (duplicateCheckResult.rowCount === 0) {
@@ -54,7 +54,6 @@ router.post('/', async (req, res, next) => {
                     email: username,
                     phone: null,
                     avatar: null,
-                    user_state: 1
                 };
                 await res.json(responseUserObject);
             } catch (err) {
