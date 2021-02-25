@@ -46,7 +46,7 @@ router.post('/', async (req, res, next) => {
                     'INSERT INTO users ' +
                     '(username, password, salt, login_method_id, email, user_state) VALUES ' +
                     '($1, $2, $3, $4, $5, $6);',
-                    [username, passwordSha256, salt, 0, username, 1]
+                    [username, passwordSha256, salt, 0, username, 0]
                 );
                 res.status(201);
                 const responseUserObject = {

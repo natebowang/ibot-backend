@@ -7,6 +7,12 @@ const RedisStore = require('connect-redis')(session);
 const {redisClient} = require('./db/connection');
 const signup = require('./routes/signup');
 const login = require('./routes/login');
+// secret.js will not be pushed to the repository. You need to set it up on the server:
+// 1. Build a secret file in the root directory.
+// 2. Add the following code to the file.
+// module.exports = {
+//     sessionSecret: '<some secret>',
+// }
 const {sessionSecret} = require('./secret.js');
 
 const app = express();
