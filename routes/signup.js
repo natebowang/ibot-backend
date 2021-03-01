@@ -34,7 +34,7 @@ router.post('/', async (req, res, next) => {
     if (emailValidateResult && passwordValidationResultArray.length === 0) {
         // todo: use pool.connect()
         const duplicateCheckResult = await pgPool.query(
-            'SELECT username FROM users WHERE username=$1;',
+            'SELECT username FROM users WHERE username=$1 AND record_status=0;',
             [username]
         );
         if (duplicateCheckResult.rowCount === 0) {
@@ -46,7 +46,7 @@ router.post('/', async (req, res, next) => {
                     'INSERT INTO users ' +
                     '(username, password, salt, login_method_id, email, user_state) VALUES ' +
                     '($1, $2, $3, $4, $5, $6);',
-                    [username, passwordSha256, salt, 0, username, 1]
+                    [username, passwordSha256, salt, 0, username, 0]
                 );
                 res.status(201);
                 const responseUserObject = {
@@ -54,7 +54,6 @@ router.post('/', async (req, res, next) => {
                     email: username,
                     phone: null,
                     avatar: null,
-                    user_state: 1
                 };
                 await res.json(responseUserObject);
             } catch (err) {
