@@ -8,6 +8,7 @@
     "test": "NODE_ENV=dev jest --watch --detectOpenHandles"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "connect-redis": "^5.0.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
@@ -22,6 +23,7 @@
     "pg": "^8.5.1",
     "pm2": "^4.5.4",
     "redis": "^3.0.2",
+    "sequelize": "^6.5.0",
     "xss": "^1.0.8"
   },
   "devDependencies": {

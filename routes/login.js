@@ -1,12 +1,13 @@
 const express = require('express');
 const createError = require('http-errors');
 const xss = require('xss');
-const crypto = require('crypto');
 const {pgPool} = require('../db/connection.js');
+const bcrypt = require('bcrypt');
 
 const router = express.Router();
+const {User} = require('../model/User');
 
-// curl -v -c ~/cookie -d '{ "username":"gy", "password": "gy"}' -H "Content-Type:application/json" http://localhost:8000/api/login
+// curl -v -c ~/cookie -d '{ "username":"bob@email.com", "password": "abc123!!!"}' -H "Content-Type:application/json" http://localhost:8000/api/login
 router.post('/', async (req, res, next) => {
     if (req.body.username !== "") {
         await usernameLoginMiddleWare(req, res, next)
@@ -20,15 +21,18 @@ router.post('/', async (req, res, next) => {
 });
 
 const sessionLoginMiddleWare = async (req, res, next) => {
-    let username = req.session.username;
-    let sqlResult = await pgPool.query(
-        'SELECT email, phone, avatar FROM users where username=$1',
-        [username]);
+    const username = req.session.username;
+
+    const {email, phone, avatar} = (await User.findOne({where: {username: username}})).get();
+
+    // let sqlResult = await pgPool.query(
+    //     'SELECT email, phone, avatar FROM users where username=$1',
+    //     [username]);
     const responseUserObject = {
         username: username,
-        email: sqlResult.rows[0].email,
-        phone: sqlResult.rows[0].phone,
-        avatar: sqlResult.rows[0].avatar,
+        email: email,
+        phone: phone,
+        avatar: avatar,
     };
     await res.json(responseUserObject);
 };
@@ -40,37 +44,35 @@ const usernameLoginMiddleWare = async (req, res, next) => {
     const username = xss(req.body.username);
     const password = req.body.password;
 
-    let result = await pgPool.query(
-        'SELECT username, password, salt, login_method_id, ' +
-        'email, phone, avatar, user_state, record_status FROM users ' +
-        'WHERE username=$1 AND record_status=0;',
-        [username]
-    );
-    if (result.rowCount === 1) {
-        const sha = crypto.createHash('sha256');
-        const salt = result.rows[0].salt;
-        const passwordSha = sha.update(password + salt).digest('hex');
-        let row = result.rows[0];
-        // Correct password
-        if (row.user_state === 0 && row.login_method_id === 0 && passwordSha === row.password) {
+    const recordCount = await User.count({where: {username: username}});
+    // let result = await pgPool.query(
+    //     'SELECT username, password, login_method_id, ' +
+    //     'email, phone, avatar, user_state, record_status FROM users ' +
+    //     'WHERE username=$1 AND record_status=0;',
+    //     [username]
+    // );
+
+    if (recordCount === 1) {
+        const record = (await User.findOne({where: {username: username}})).get();
+        const ifPasswordCorrect = await bcrypt.compare(password, record.password);
+        if (record.user_state === 0 && record.login_method_id === 0 && ifPasswordCorrect) {
             req.session.username = username;
-            console.log(req.session.id)
             const responseUserObject = {
                 username: username,
-                email: row.email,
-                phone: row.phone,
-                avatar: row.avatar,
+                email: record.email,
+                phone: record.phone,
+                avatar: record.avatar,
             };
             await res.json(responseUserObject);
-        } else if (row.login_method_id !== 0) { // Should use other login method
+        } else if (record.login_method_id !== 0) { // Should use other login method
             errorMessage = 'You should continue with another login method.';
             errorProps = Object.assign(errorProps, {loginMethodId: row.login_method_id});
             next(createError(401, errorMessage, {errorProps: errorProps}));
-        } else if (row.user_state !== 0) { // User is disabled
+        } else if (record.user_state !== 0) { // User is disabled
             errorMessage = 'User is disabled.';
             errorProps = Object.assign(errorProps, {userDisabled: true});
             next(createError(401, errorMessage, {errorProps: errorProps}));
-        } else if (passwordSha !== row.password) {
+        } else if (ifPasswordCorrect) {
             errorMessage = 'Incorrect username or password';
             errorProps = Object.assign(errorProps, {incorrectUsernamePwd: true});
             next(createError(401, errorMessage, {errorProps: errorProps}));
