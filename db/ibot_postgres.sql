@@ -3,7 +3,7 @@ CREATE TABLE public.users
     id              SERIAL primary key,
 
 --     Authentication
-    username        varchar(200) NOT NULL,
+    username        varchar(200) NOT NULL UNIQUE,
     password        varchar(200) NOT NULL,
     salt            varchar(200) NOT NULL,
     login_method_id integer      NOT NULL,

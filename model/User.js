@@ -1,5 +1,5 @@
-const {Sequelize, Model, DataTypes} = require("sequelize");
-const sequelize = new Sequelize('postgres://wangbo@localhost:5432/ibot');
+const {Model, DataTypes} = require("sequelize");
+const {sequelize} = require('../db/connection');
 
 class User extends Model {
 }
